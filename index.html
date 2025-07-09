@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sefika Ozturk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, serif;
+            background: #fefefe;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #d4a574;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #8b6f47;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #a0845c;
+            font-style: italic;
+        }
+
+        nav {
+            margin-bottom: 40px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #8b6f47;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background-color: #f5f0e8;
+            color: #6b5339;
+        }
+
+        .section {
+            display: none;
+            margin-bottom: 40px;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #8b6f47;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: normal;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .text-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .text-content p {
+            margin-bottom: 20px;
+        }
+
+        .text-content a {
+            color: #8b6f47;
+            text-decoration: underline;
+        }
+
+        .text-content a:hover {
+            color: #6b5339;
+        }
+
+        .photo-container {
+            text-align: center;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 250px;
+            background: #f5f0e8;
+            border: 2px solid #d4a574;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #a0845c;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .project-card {
+            background: #f9f7f4;
+            border: 1px solid #e8dcc6;
+            padding: 25px;
+            border-radius: 4px;
+        }
+
+        .project-card h3 {
+            color: #8b6f47;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+
+        .project-card p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .project-card a {
+            color: #8b6f47;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .project-card a:hover {
+            text-decoration: underline;
+        }
+
+        .resume-container {
+            text-align: center;
+        }
+
+        .resume-embed {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #d4a574;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .resume-link {
+            display: inline-block;
+            color: #8b6f47;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border: 2px solid #d4a574;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .resume-link:hover {
+            background-color: #f5f0e8;
+        }
+
+        .updates-content {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .updates-text {
+            text-align: center;
+        }
+
+        .updates-text h3 {
+            font-size: 1.5rem;
+            color: #8b6f47;
+            margin-bottom: 20px;
+            font-weight: normal;
+        }
+
+        .updates-text p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .meme-placeholder {
+            width: 100%;
+            height: 200px;
+            background: #f5f0e8;
+            border: 2px solid #d4a574;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #a0845c;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .updates-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sefika Ozturk</h1>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link active" data-section="main">Main</a></li>
+                <li><a href="#" class="nav-link" data-section="portfolio">Portfolio</a></li>
+                <li><a href="#" class="nav-link" data-section="resume">Resume</a></li>
+                <li><a href="#" class="nav-link" data-section="updates">Updates!</a></li>
+            </ul>
+        </nav>
+
+        <div id="main" class="section active">
+            <h2 class="section-title">About Me</h2>
+            <div class="main-content">
+                <div class="text-content">
+                    <p>Hi! I'm Sefika Ozturk. I was born on the coast of the Mediterranean in a sunny city called Antalya. I moved to the US on my own at 18 to study at <a href="https://news.vanderbilt.edu/2023/06/30/nine-students-selected-as-new-ingram-scholars/" target="_blank">Vanderbilt as an Ingram Scholar</a>.</p>
+                    
+                    <p>My academic interests are in CS, Math and Data Science. In my free time, I think about cities, communities, religions and culture — complex systems comprised of humans and our byproducts, with all their emergent properties and beauty.</p>
+                    
+                    <p>Books that have shaped my thinking include: <a href="https://en.wikipedia.org/wiki/Guns,_Germs,_and_Steel" target="_blank">Guns, Germs, and Steel</a>, <a href="https://en.wikipedia.org/wiki/On_the_Origin_of_Species" target="_blank">The Origin of Species</a>, <a href="https://en.wikipedia.org/wiki/Brave_New_World" target="_blank">Brave New World</a>, <a href="https://en.wikipedia.org/wiki/The_Clockwork_Orange" target="_blank">The Clockwork Orange</a>, <a href="https://en.wikipedia.org/wiki/I_Am_a_Strange_Loop" target="_blank">I Am a Strange Loop</a>, and more!</p>
+                    
+                    <p>Famous role models: <a href="https://en.wikipedia.org/wiki/Richard_Feynman" target="_blank">Richard Feynman</a> (taught me to think from fundamentals), <a href="https://en.wikipedia.org/wiki/Canan_Dağdeviren" target="_blank">Canan Dağdeviren</a> (taught me to shoot for the moon), <a href="https://en.wikipedia.org/wiki/Çağrı_Mert_Bakırcı" target="_blank">Çağrı Mert Bakırcı</a> (inspired the 6th grader Sefika to read any science book she can get her hands on). (Though, most of my role models are friends and family, primarily L, J, K, D.)</p>
+                    
+                    <p>My favorite city in the entire world is NYC. I love the fast pace, the diversity, the chaos, the "world is your oyster" energy. Being in NYC gives me a high, it exhilarates me.</p>
+                    
+                    <p>My favorite pastime is going on long walks to think — so much so that I've been captured outside by the Google Maps cars a few times. You can find me on Google Maps! :D</p>
+                    
+                    <p>I love meeting new people and joining/cultivating communities. If you're reading this, let's chat sometime!! <a href="https://calendly.com/sefika-ozturk" target="_blank">Book a time to meet</a> or email me.</p>
+                </div>
+                <div class="photo-container">
+                    <div class="photo-placeholder">
+                        <img src="./photo1.jpeg" alt="Meme" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="portfolio" class="section">
+            <h2 class="section-title">Portfolio</h2>
+            <div class="portfolio-grid">
+                <div class="project-card">
+                    <h3>Gemicast</h3>
+                    <p>A collaborative podcast platform that allows users to create and share podcast content together. Built with modern web technologies for seamless user experience.</p>
+                    <a href="https://github.com/fbablu/gemicast" target="_blank">View on GitHub →</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Vanderbilt Fellows Challenge</h3>
+                    <p>Working with Vanderbilt Fellows to tackle real-world challenges through innovative solutions and collaborative problem-solving approaches.</p>
+                    <a href="https://www.vanderbilt.edu/the-wondry/2024/12/18/vanderbilt-fellows-work-to-solve-challenges/" target="_blank">Read More →</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Research Document</h3>
+                    <p>Comprehensive research documentation exploring data science applications and methodologies in academic settings.</p>
+                    <a href="https://docs.google.com/document/d/1LcLE6c7qk4HWd9k2Fe0uWt2a9ZNaScD3/edit" target="_blank">View Document →</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Los Problemos Game</h3>
+                    <p>An interactive game project developed collaboratively, showcasing creative problem-solving and game development skills.</p>
+                    <a href="https://ytkimirti.itch.io/los-problemos" target="_blank">Play Game →</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Python Docs Turkish Translation</h3>
+                    <p>Contributing to the Python documentation Turkish translation project, helping make Python more accessible to Turkish-speaking developers.</p>
+                    <a href="https://github.com/python/python-docs-tr" target="_blank">View Contribution →</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Video Presentation</h3>
+                    <p>Educational video content sharing insights on data science, technology, and academic research methodologies.</p>
+                    <a href="https://www.youtube.com/watch?v=Y8ILhGJ1UP8" target="_blank">Watch Video →</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Scorpions Team Website</h3>
+                    <p>Team website development showcasing collaborative projects, achievements, and team dynamics in a tech-focused environment.</p>
+                    <a href="https://www.scorpions7672.com" target="_blank">Visit Site →</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="resume" class="section">
+            <h2 class="section-title">Resume</h2>
+            <div class="resume-container">
+                <iframe 
+                    src="https://drive.google.com/file/d/1t7dcrLFX-gBpnJyZHmAMFaPeL3INfWob/preview" 
+                    class="resume-embed">
+                </iframe>
+                <a href="https://drive.google.com/file/d/1t7dcrLFX-gBpnJyZHmAMFaPeL3INfWob/view?usp=sharing" target="_blank" class="resume-link">
+                    Open Full Resume
+                </a>
+            </div>
+        </div>
+
+        <div id="updates" class="section">
+            <h2 class="section-title">Updates!</h2>
+            <div class="updates-content">
+                <div class="updates-text">
+                    <h3>Coming Soon</h3>
+                    <p>This page is a work in progress!</p>
+                </div>
+                <div class="meme-placeholder">
+                    <img src="./photo2.jpg" alt="Meme" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all links and sections
+                navLinks.forEach(l => l.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked link
+                link.classList.add('active');
+                
+                // Show corresponding section
+                const targetSection = link.dataset.section;
+                document.getElementById(targetSection).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
