@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intersections · Sefika Ozturk</title>
+<meta name="description" content="A slot machine for finding companies and projects working where AI meets other fields.">
+<meta property="og:title" content="Intersections">
+<meta property="og:description" content="Pull the lever: AI × N fields, and who is already building there.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+<style>
+/* Layout: one plain left-aligned column on white, Paul Graham style; a line-drawn slot machine is the only object on the page. */
+:root {
+  --paper: #ffffff;
+  --ink: #111111;
+  --soft: #6b6b6b;
+  --hair: #d9d9d9;
+  --red: #e2231a;
+  --link: #1a3fbf;
+  --serif: Georgia, "Times New Roman", Times, serif;
+  --sans: Verdana, Geneva, "DejaVu Sans", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--paper); }
+body { color: var(--ink); font: 14px/1.6 var(--sans); }
+.page {
+  max-width: 640px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 48px 72px;
+}
+h1 { font: 400 30px/1.1 var(--serif); margin: 0 0 10px; letter-spacing: -0.01em; }
+.lede { margin: 0 0 32px; color: var(--ink); max-width: 34em; }
+a { color: var(--link); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* ---------- machine ---------- */
+.machine { display: flex; align-items: stretch; gap: 0; }
+.cabinet { flex: 1; min-width: 0; border: 1.5px solid var(--ink); border-radius: 18px; padding: 14px 14px 12px; }
+.marquee { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.marquee b { font: 400 13px/1 var(--serif); letter-spacing: .32em; text-transform: uppercase; }
+.lights { display: flex; gap: 6px; }
+.lights i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--ink); display: block; }
+.spinning .lights i { animation: chase .9s steps(1) infinite; animation-delay: calc(var(--k) * 75ms); }
+@keyframes chase { 0%, 30% { background: var(--red); border-color: var(--red); } 31%, 100% { background: transparent; } }
+.jackpot .lights i { animation: flash .35s steps(1) 6; }
+@keyframes flash { 0% { background: var(--red); border-color: var(--red); } 50% { background: transparent; border-color: var(--ink); } }
+.marquee .win { font: 11px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--red); min-width: 6em; text-align: right; }
+
+.reels { display: flex; flex-wrap: wrap; border: 1px solid var(--ink); border-radius: 8px; overflow: hidden; --fs: 18px; --h: 64px; }
+.col { flex: 1 1 84px; min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--hair); }
+.col:last-child { border-right: 0; }
+.reel { position: relative; height: calc(var(--h) * 3); overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent); }
+.payline { position: absolute; left: 0; right: 0; top: calc(var(--h) * 1.5); height: 0; border-top: 1px solid var(--red); opacity: .5; pointer-events: none; z-index: 2; }
+.payline::before, .payline::after { content: ""; position: absolute; top: -5px; border: 5px solid transparent; }
+.payline::before { left: 0; border-left-color: var(--red); }
+.payline::after { right: 0; border-right-color: var(--red); }
+.strip { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
+.cell { height: var(--h); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--fs) * .25); padding-inline: 4px; }
+.cell svg { width: calc(var(--fs) * 1.5); height: calc(var(--fs) * 1.5); flex: none; }
+.cell span { font: 400 var(--fs)/1 var(--serif); white-space: nowrap; letter-spacing: -0.01em; }
+.moving .strip { filter: blur(1px); }
+.col.ai .cell span { font-style: italic; }
+.col.ai .strip { position: static; padding-top: var(--h); }
+.hold { font: 10px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; background: var(--paper); color: var(--soft);
+  border: 0; border-top: 1px solid var(--hair); padding: 9px 4px; cursor: pointer; }
+.hold:hover { color: var(--ink); }
+.hold[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.hold[disabled] { cursor: default; color: var(--hair); }
+.col.ai .hold { color: var(--soft); cursor: default; }
+.landed .strip { animation: thunk .28s ease-out; }
+@keyframes thunk { 40% { transform: var(--t) translateY(3px); } }
+
+.tray { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-top: 14px; }
+.tray label { font-size: 12px; color: var(--soft); }
+.nwrap { display: flex; align-items: center; gap: 10px; }
+.nval { font: 400 24px/1 var(--serif); width: 1em; text-align: center; font-variant-numeric: tabular-nums; }
+input[type=range] { -webkit-appearance: none; appearance: none; width: 150px; height: 24px; background: transparent; cursor: pointer; }
+input[type=range]::-webkit-slider-runnable-track { height: 1px; background: var(--ink); }
+input[type=range]::-moz-range-track { height: 1px; background: var(--ink); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--ink); }
+input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--ink); }
+.spin { margin-left: auto; font: 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; background: var(--ink); color: var(--paper); border: 0; border-radius: 99px; padding: 11px 18px; cursor: pointer; }
+.spin.stop { background: var(--red); }
+
+/* lever */
+.lever { width: 44px; flex: none; position: relative; cursor: grab; touch-action: none; border: 0; background: none; padding: 0; }
+.lever .base { position: absolute; left: 0; top: 50%; width: 14px; height: 46px; margin-top: -23px; border: 1.5px solid var(--ink); border-left: 0; border-radius: 0 6px 6px 0; }
+.lever .arm { position: absolute; left: 13px; bottom: 50%; width: 18px; height: 42%; transform-origin: 50% 100%; transition: transform .35s cubic-bezier(.3,1.5,.5,1); }
+.lever .arm::before { content: ""; position: absolute; left: 8px; top: 12px; bottom: 0; width: 1.5px; background: var(--ink); }
+.lever .arm::after { content: ""; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--red); }
+.lever.pulled .arm { transform: scaleY(-1); transition: transform .18s ease-in; }
+
+.hint { margin: 12px 0 0; font-size: 12px; color: var(--soft); }
+
+/* ---------- results ---------- */
+.result { margin-top: 44px; }
+.combo { font: 400 22px/1.25 var(--serif); margin: 0 0 6px; text-wrap: balance; }
+.verdict { margin: 0 0 22px; color: var(--soft); }
+.verdict b { color: var(--red); font-weight: 400; }
+h2.sub { font: 12px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--soft); margin: 28px 0 10px; font-weight: 400; }
+ul.list { list-style: none; margin: 0; padding: 0; }
+ul.list li { padding: 0 0 14px; }
+ul.list li a.name { font-weight: bold; }
+.meta { display: block; font-size: 12px; color: var(--soft); }
+.meta em { font-style: normal; color: var(--ink); }
+.scout { font: inherit; color: var(--link); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.scout[disabled] { color: var(--soft); cursor: progress; }
+footer { margin-top: 56px; padding-top: 14px; border-top: 1px solid var(--hair); font-size: 12px; color: var(--soft); }
+
+@media (max-width: 480px) {
+  h1 { font-size: 26px; }
+  .spin { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<main class="page">
+  <h1>Intersections</h1>
+  <p class="lede">Companies and projects working where AI meets other fields. Choose how many fields, pull the lever, and see who is already building there.</p>
+
+  <div class="machine" id="machine">
+    <div class="cabinet">
+      <div class="marquee"><div class="lights" id="lights"></div><b>Intersections</b><span class="win" id="win"></span></div>
+      <div class="reels" id="reels"></div>
+      <div class="tray">
+        <div class="nwrap"><label for="n">Fields</label><input id="n" type="range" min="1" max="5" step="1" value="3"><span class="nval" id="nOut">3</span></div>
+        <button class="spin" id="spin" type="button">Spin</button>
+      </div>
+    </div>
+    <button class="lever" id="lever" type="button" aria-label="Pull the lever"><span class="base"></span><span class="arm"></span></button>
+  </div>
+  <p class="hint">Press stop (or space) when you see a combination you like, or let it land on its own. Hold a reel to keep it for the next spin.</p>
+
+  <section class="result" aria-live="polite">
+    <p class="combo" id="combo"></p>
+    <p class="verdict" id="verdict"></p>
+    <div id="list"></div>
+  </section>
+
+  <footer><span id="foot"></span> <a href="index.html">← home</a></footer>
+</main>
+
+<script>
+(() => {
+"use strict";
+const c = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
+const FIELDS = {
+  bio: ["Biology", "M8 3c0 6 8 6 8 9s-8 3-8 9M16 3c0 6-8 6-8 9s8 3 8 9M9.5 6h5M9.5 18h5"],
+  chem: ["Chemistry", "M9 3h6M10 3v6L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3M7.5 14h9"],
+  mat: ["Materials", "M12 2l9 5v10l-9 5-9-5V7zM3 7l9 5 9-5M12 12v10"],
+  med: ["Medicine", "M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"],
+  neuro: ["Neuroscience", "M12 5a3 3 0 0 0-5.6-1.5A3 3 0 0 0 4 8a3 3 0 0 0 0 5 3 3 0 0 0 3 5 3 3 0 0 0 5 2V5zM12 5a3 3 0 0 1 5.6-1.5A3 3 0 0 1 20 8a3 3 0 0 1 0 5 3 3 0 0 1-3 5 3 3 0 0 1-5 2"],
+  robo: ["Robotics", "M5 8h14v11H5zM12 8V4" + c(9, 13, 1.2) + c(15, 13, 1.2) + "M9.5 16.5h5M2 12v3M22 12v3"],
+  mfg: ["Manufacturing", c(12, 12, 3) + c(12, 12, 7) + "M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"],
+  energy: ["Energy", "M13 2 4 14h7l-1 8 9-12h-7z"],
+  climate: ["Climate", "M5 20c0-9 6-15 15-15 0 9-6 15-15 15zM5 20l8-8"],
+  ag: ["Agriculture", "M12 21v-9M12 12C12 8 9 6 5 6c0 4 3 6 7 6zM12 10c0-4 3-6 7-6 0 4-3 6-7 6zM6 21h12"],
+  food: ["Food", "M3 11h18a9 9 0 0 1-18 0zM9 7c0-2 2-2 2-4M14 7c0-2 2-2 2-4"],
+  consumer: ["Consumer", "M5 8h14l-1.2 13H6.2zM9 8V6a3 3 0 0 1 6 0v2"],
+  fashion: ["Fashion", "M12 8a2 2 0 1 0-2-2M12 8v1l9 6.5V17H3v-1.5L12 9"],
+  music: ["Music", "M9 18V5l11-2v13" + c(6, 18, 3) + c(17, 16, 3)],
+  film: ["Film", "M3 4h18v16H3zM7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"],
+  games: ["Gaming", "M6 7h12a4 4 0 0 1 4 4v2a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4v-2a4 4 0 0 1 4-4zM7 12h4M9 10v4" + c(15.5, 11, .8) + c(17.5, 13.5, .8)],
+  edu: ["Education", "M2 9l10-5 10 5-10 5zM6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"],
+  fin: ["Finance", "M3 21h18M6 17v-5M11 17V8M16 17v-7M4 9l5-5 4 3 7-5"],
+  law: ["Law", "M12 3v18M7 21h10M5 7h14M5 7 2 14a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"],
+  space: ["Space", "M12 2c4 3 5 8 3 13H9C7 10 8 5 12 2zM9 15l-3 4h4M15 15l3 4h-4" + c(12, 9, 1.6)],
+  defense: ["Defense", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"],
+  physics: ["Physics", c(12, 12, 1.5) + "M2 12a10 4 0 1 0 20 0a10 4 0 1 0-20 0M7 3.34a10 4 60 1 0 10 17.32a10 4 60 1 0-10-17.32M7 20.66a10 4-60 1 0 10-17.32a10 4-60 1 0-10 17.32"],
+  math: ["Math", "M18 4H6l6 8-6 8h12"],
+  built: ["Architecture", "M3 21h18M5 21V9l7-5 7 5v12M10 21v-6h4v6M9 11h1M14 11h1"],
+  transport: ["Transport", "M3 16v-4l2-5h14l2 5v4zM3 16v3h3v-3M18 16v3h3v-3" + c(7, 13, 1) + c(17, 13, 1)],
+};
+const AI_PATH = "M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2z";
+const KEYS = Object.keys(FIELDS);
+const icon = (k, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}><path d="${k === "ai" ? AI_PATH : FIELDS[k][1]}"/></svg>`;
+
+const KIND = { C: "Company", L: "Research lab", P: "Project" };
+const RAW = [
+["Isomorphic Labs","C","bio chem med","Drug discovery company spun out of Google DeepMind, building on AlphaFold to model how molecules bind.","https://www.isomorphiclabs.com"],
+["AlphaFold 3","P","bio chem","Google DeepMind and Isomorphic model that predicts how proteins sit together with DNA, RNA and small molecules.","https://alphafoldserver.com"],
+["Recursion","C","bio med robo","Runs automated wet labs that image millions of cell experiments to train drug discovery models.","https://www.recursion.com"],
+["Insilico Medicine","C","bio chem med","Generative models from target discovery to molecule design, with an AI-found drug candidate in mid-stage trials.","https://insilico.com"],
+["Generate:Biomedicines","C","bio med","Generative protein design for new antibody and protein therapeutics.","https://generatebiomedicines.com"],
+["Profluent","C","bio med","Protein language models; released OpenCRISPR-1, an AI-designed gene editor.","https://www.profluent.bio"],
+["EvolutionaryScale","C","bio","Makers of ESM3, a frontier language model that reads and writes proteins.","https://www.evolutionaryscale.ai"],
+["Evo 2","P","bio","Arc Institute and NVIDIA genome model trained on DNA from across the tree of life.","https://arcinstitute.org"],
+["Ginkgo Bioworks","C","bio mfg robo ag med","Automated cell-programming foundry that pairs robotic labs with DNA and protein models for pharma, farms and industry.","https://www.ginkgobioworks.com"],
+["Periodic Labs","C","physics mat chem robo","Founded by OpenAI and DeepMind alumni to discover new materials, like superconductors, using AI-run autonomous labs.",""],
+["Lila Sciences","C","bio chem mat robo","Building scientific superintelligence with autonomous labs across life, chemical and materials science.","https://www.lila.ai"],
+["Orbital Materials","C","mat chem climate","Generative models for new materials, starting with sorbents for carbon capture and data center cooling.","https://www.orbitalmaterials.com"],
+["CuspAI","C","mat chem climate","Cambridge startup designing carbon capture materials with generative AI and molecular simulation.","https://www.cusp.ai"],
+["GNoME","P","mat chem physics","Google DeepMind graph network that predicted 2.2 million new crystal structures.",""],
+["MatterGen","P","mat chem","Microsoft Research diffusion model that generates inorganic materials with requested properties.",""],
+["Aurora (Microsoft)","P","climate physics","Microsoft foundation model for the atmosphere, forecasting weather, air quality and cyclones.",""],
+["WeatherNext","P","climate physics","Google DeepMind's family of AI weather models, grown out of GraphCast and GenCast.",""],
+["Earth-2","P","climate physics","NVIDIA platform for kilometer-scale AI climate and weather simulation.",""],
+["Inari","C","ag bio","Combines predictive design with multiplex gene editing to breed higher-yield seeds.","https://inari.com"],
+["Carbon Robotics","C","ag robo","The LaserWeeder uses computer vision to find weeds and zap them with lasers instead of herbicide.","https://carbonrobotics.com"],
+["Monarch Tractor","C","ag robo energy","Electric, driver-optional tractor that gathers crop data as it works.","https://www.monarchtractor.com"],
+["Aigen","C","ag robo energy climate","Solar-powered field robots that weed crops autonomously.","https://www.aigen.io"],
+["Climax Foods","C","food bio consumer","Uses machine learning on plant ingredients to recreate dairy cheese without animals.","https://climaxfoods.com"],
+["NotCo","C","food consumer chem","Its Giuseppe model matches plant ingredients to the taste and texture of animal foods.","https://notco.com"],
+["Shiru","C","food bio","Finds functional plant proteins for food ingredients with AI screening.","https://www.shiru.com"],
+["Brightseed","C","bio food med consumer","Forager AI maps plant compounds to health benefits, then turns them into ingredients.","https://www.brightseedbio.com"],
+["Arzeda","C","bio chem mat consumer","Designs enzymes computationally to make ingredients and materials, from sweeteners to specialty chemicals.","https://www.arzeda.com"],
+["Osmo","C","chem neuro consumer fashion","Digitizing smell: models that map molecules to odor, used to create new fragrance molecules.","https://www.osmo.ai"],
+["Suno","C","music consumer","Generates full songs, vocals included, from a text prompt.","https://suno.com"],
+["Udio","C","music consumer","Text-to-music generator for producers and casual creators.","https://www.udio.com"],
+["Endel","C","music neuro consumer med","Generates personalized soundscapes tuned for focus, relaxation and sleep.","https://endel.io"],
+["Moises","C","music edu","Splits songs into stems for practice, remixing and learning.","https://moises.ai"],
+["Runway","C","film consumer","Video generation and editing models used by filmmakers and studios.","https://runwayml.com"],
+["Luma AI","C","film consumer","Video and 3D generation models, including Dream Machine.","https://lumalabs.ai"],
+["Wonder Dynamics","C","film games","Autodesk-owned tool that drops CG characters into live footage automatically.",""],
+["ElevenLabs","C","film consumer edu","Voice generation and dubbing across dozens of languages.","https://elevenlabs.io"],
+["Synthesia","C","film edu","AI video presenters for company training and education content.","https://www.synthesia.io"],
+["Inworld AI","C","games consumer","Engine for AI-driven game characters with memory and voice.","https://inworld.ai"],
+["Scenario","C","games film","Generates game-ready art trained on a studio's own style.","https://www.scenario.com"],
+["Latitude (AI Dungeon)","C","games consumer","Text adventures narrated live by language models.","https://latitude.io"],
+["Duolingo Max","P","edu consumer games","Duolingo's tier with AI roleplay conversations and answer explanations.","https://www.duolingo.com"],
+["Khanmigo","P","edu","Khan Academy's AI tutor and teaching assistant.","https://www.khanmigo.ai"],
+["Speak","C","edu consumer","Language learning through spoken conversation with an AI tutor.","https://www.speak.com"],
+["Hippocratic AI","C","med","Safety-focused voice agents for non-diagnostic patient care tasks.","https://www.hippocraticai.com"],
+["Abridge","C","med","Turns doctor-patient conversations into clinical notes.","https://www.abridge.com"],
+["Tempus","C","med bio","Pairs genomic sequencing with clinical data to guide cancer care.","https://www.tempus.com"],
+["PathAI","C","med bio","AI pathology for reading tissue slides.","https://www.pathai.com"],
+["Viz.ai","C","med neuro","Flags suspected strokes on brain scans and alerts care teams.","https://www.viz.ai"],
+["Unlearn","C","med bio","Builds digital twins of patients to shrink clinical trial control arms.","https://www.unlearn.ai"],
+["Neuralink","C","neuro med robo","Brain-computer interface implanted by a custom surgical robot; decodes intent into cursor control.","https://neuralink.com"],
+["Synchron","C","neuro med","Brain-computer interface placed through blood vessels, with no open-brain surgery.","https://synchron.com"],
+["Precision Neuroscience","C","neuro med mat","Thin-film brain interface that rests on the surface of the cortex.","https://precisionneuro.io"],
+["Science Corp.","C","neuro med","Retinal implant for restoring vision, plus other neural interfaces.","https://science.xyz"],
+["NewLimit","C","bio med","ML-guided screens for epigenetic reprogramming therapies against aging.","https://www.newlimit.com"],
+["Retro Biosciences","C","bio med","Cell reprogramming for longevity; worked with OpenAI on a protein design model.","https://retro.bio"],
+["Inceptive","C","bio med","Designs mRNA and other RNA molecules with deep learning.","https://inceptive.life"],
+["Dyno Therapeutics","C","bio med","ML-designed capsids for delivering gene therapies.","https://www.dynotx.com"],
+["Chai Discovery","C","bio chem med","Foundation models for molecular structure and antibody design.","https://www.chaidiscovery.com"],
+["Iambic","C","chem med","AI-driven small molecule drug discovery with its own clinical pipeline.","https://www.iambic.ai"],
+["Enveda","C","bio chem med","Maps nature's chemistry with metabolomics and ML to find new medicines.","https://www.enveda.com"],
+["FutureHouse","L","bio chem","Nonprofit building AI scientists that read papers, plan experiments and reason about chemistry.","https://www.futurehouse.org"],
+["Medra","C","robo bio","Physical AI that operates lab instruments the way a scientist would.",""],
+["Automata","C","robo bio","Automated lab benches for biology and drug discovery.","https://automata.tech"],
+["Solugen","C","chem bio mfg climate","Makes chemicals with engineered enzymes and metal catalysts instead of petroleum.","https://solugen.com"],
+["Citrine Informatics","C","mat chem mfg","Materials and chemicals data platform for faster product development.","https://citrine.io"],
+["Albert Invent","C","chem mat mfg","R&D platform that helps chemists predict formulations.","https://www.albertinvent.com"],
+["SandboxAQ","C","physics chem mat med defense","Large quantitative models for chemistry, materials and medicine, plus GPS-free navigation.","https://www.sandboxaq.com"],
+["Chemix","C","energy chem mat","AI-designed battery chemistries for electric vehicles.","https://www.chemix.ai"],
+["Aionics","C","energy chem","Designs battery electrolytes with machine learning.","https://www.aionics.io"],
+["Mitra Chem","C","energy mat chem mfg","ML-accelerated iron-based cathode materials for cheaper batteries.","https://www.mitrachem.com"],
+["KoBold Metals","C","energy mat climate","Uses AI to find deposits of lithium, copper and other battery metals.","https://www.koboldmetals.com"],
+["Fervo Energy","C","energy climate","Next-generation geothermal using horizontal drilling and fiber-optic data.","https://fervoenergy.com"],
+["Tokamak plasma control","P","energy physics","DeepMind and EPFL used reinforcement learning to shape plasma inside a fusion reactor.",""],
+["Aurora Solar","C","energy built","Designs rooftop solar systems from aerial imagery.","https://aurorasolar.com"],
+["Overstory","C","energy climate space","Satellite imagery and AI to manage trees near power lines and cut wildfire risk.","https://www.overstory.com"],
+["FireSat","P","space climate","Satellite constellation from Muon Space and Google Research to spot small wildfires early.","https://www.muonspace.com"],
+["Planet","C","space climate ag","Daily satellite imagery of the whole planet, analyzed with ML.","https://www.planet.com"],
+["Tomorrow.io","C","climate space","Weather intelligence company running its own radar satellites.","https://www.tomorrow.io"],
+["Pachama","C","climate fin space","Verifies forest carbon projects with satellite data and ML.","https://pachama.com"],
+["Sylvera","C","climate fin","Independent ratings for carbon credits.","https://www.sylvera.com"],
+["Indigo Ag","C","ag bio climate fin","Microbial seed treatments plus a carbon program that pays farmers.","https://www.indigoag.com"],
+["Kettle","C","fin climate","Reinsurance priced with machine-learned wildfire models.",""],
+["ZestyAI","C","fin climate built","Property-level climate risk scores for insurers.","https://zesty.ai"],
+["Tractable","C","fin transport","Assesses car and property damage from photos for insurers.","https://tractable.ai"],
+["Harvey","C","law","AI platform for law firms and in-house legal teams.","https://www.harvey.ai"],
+["Spellbook","C","law","Drafts and reviews contracts inside Word.","https://www.spellbook.legal"],
+["EvenUp","C","law med","Turns medical records into personal injury demand letters.","https://www.evenuplaw.com"],
+["Ramp","C","fin","Corporate cards and spend management with AI agents.","https://ramp.com"],
+["Numerai","C","fin math","Hedge fund run on crowdsourced data science models.","https://numer.ai"],
+["Harmonic","C","math","Aristotle, a model that writes formally verified math proofs.","https://harmonic.fun"],
+["AlphaProof","P","math","DeepMind system that reached silver-medal level at the 2024 Math Olympiad.",""],
+["AlphaEvolve","P","math physics","DeepMind coding agent that found new algorithms and math constructions.",""],
+["Figure","C","robo mfg consumer","Humanoid robots, tested on car factory lines and aimed at homes.","https://www.figure.ai"],
+["Physical Intelligence","C","robo","General-purpose robot foundation models.","https://www.physicalintelligence.company"],
+["1X","C","robo consumer","NEO, a humanoid robot built for the home.","https://www.1x.tech"],
+["Agility Robotics","C","robo mfg transport","Digit humanoid moving totes in warehouses.","https://agilityrobotics.com"],
+["Bright Machines","C","mfg robo","Software-defined robotic assembly for electronics.","https://www.brightmachines.com"],
+["Hadrian","C","mfg defense space robo","Automated factories for aerospace and defense parts.","https://www.hadrian.co"],
+["Machina Labs","C","mfg robo mat defense","Robots that form sheet metal into parts without dies.","https://machinalabs.ai"],
+["Divergent","C","mfg mat transport","Generative design plus 3D printing for car and aerospace structures.","https://www.divergent3d.com"],
+["Zoo","C","mfg","Text-to-CAD and a programmable CAD engine.","https://zoo.dev"],
+["Vizcom","C","mfg consumer fashion","Turns industrial design sketches into finished renders.","https://www.vizcom.ai"],
+["PhysicsX","C","physics mfg energy","AI models that stand in for slow engineering simulations.","https://www.physicsx.ai"],
+["Anduril","C","defense robo space","Autonomous defense systems tied together by its Lattice software.","https://www.anduril.com"],
+["Shield AI","C","defense robo","Hivemind, an AI pilot for drones and aircraft.","https://shield.ai"],
+["Skydio","C","robo defense built","Autonomous drones for inspection and public safety.","https://www.skydio.com"],
+["Zipline","C","robo med transport","Autonomous drones delivering medicine and packages.","https://www.flyzipline.com"],
+["Waymo","C","transport robo consumer","Fully driverless ride-hailing in several US cities.","https://waymo.com"],
+["Wayve","C","transport robo","End-to-end learned driving software.","https://wayve.ai"],
+["Aurora Innovation","C","transport robo","Driverless trucks hauling freight in Texas.","https://aurora.tech"],
+["ICON","C","built robo mat space","3D-printed homes, an AI architect called Vitruvius, and lunar construction work with NASA.","https://www.iconbuild.com"],
+["Built Robotics","C","built robo energy","Autonomous pile drivers for utility-scale solar farms.","https://www.builtrobotics.com"],
+["Dusty Robotics","C","built robo","Robots that print building layouts directly onto construction floors.","https://www.dustyrobotics.com"],
+["TestFit","C","built fin","Generative site planning for real estate deals.","https://www.testfit.io"],
+["Miso Robotics","C","food robo consumer","Flippy, a robotic fry cook for restaurant kitchens.","https://misorobotics.com"],
+["Chef Robotics","C","food robo mfg","Robots that assemble meals on food production lines.","https://www.chefrobotics.ai"],
+["Afresh","C","food consumer climate","Fresh-food ordering for grocers that cuts waste.","https://www.afresh.com"],
+["Winnow","C","food climate","Cameras over kitchen bins that track and cut food waste.","https://www.winnowsolutions.com"],
+["AMP","C","robo climate","AI sorting robots for recycling facilities.",""],
+["Greyparrot","C","climate robo","Computer vision that monitors waste streams at recycling plants.","https://www.greyparrot.ai"],
+["Refiberd","C","fashion climate mat","Identifies textile fibers with AI so clothing can be recycled.","https://www.refiberd.com"],
+["Smartex","C","fashion mfg","Spots fabric defects on knitting machines in real time.","https://www.smartex.ai"],
+["Unspun","C","fashion mfg robo","3D weaving machines for made-to-order garments.","https://www.unspun.io"],
+["Daydream","C","fashion consumer","Chat-based fashion shopping across thousands of brands.",""],
+["Doji","C","fashion consumer","Virtual try-on with a personal avatar.",""],
+["Stitch Fix","C","fashion consumer","Personal styling driven by data science.","https://www.stitchfix.com"],
+["Oura","C","consumer med","Smart ring with an AI health advisor.","https://ouraring.com"],
+["Function Health","C","med consumer bio","Lab testing memberships with AI-generated insights.","https://www.functionhealth.com"],
+["Neko Health","C","med consumer","Full-body scanning clinics that use AI for analysis.","https://www.nekohealth.com"],
+["Sword Health","C","med consumer","Digital physical therapy guided by AI.","https://swordhealth.com"],
+["Earth Species Project","L","bio climate","Nonprofit using ML to decode animal communication.","https://www.earthspecies.org"],
+["Project CETI","L","bio","Using ML to understand how sperm whales communicate.","https://www.projectceti.org"],
+["Basecamp Research","C","bio climate","Gathers biodiversity data worldwide to train protein design models.","https://www.basecamp-research.com"],
+["Midjourney","C","consumer film fashion","Image generation used across art, design and fashion.","https://www.midjourney.com"],
+["Lightmatter","C","physics mfg","Photonic chips that move AI data with light.","https://lightmatter.co"],
+["Quantinuum","C","physics chem","Quantum computing company combining its hardware with AI.","https://www.quantinuum.com"],
+];
+const DATA = RAW.map(([name, k, tags, blurb, url]) => ({ name, kind: KIND[k], tags: tags.split(" "), blurb, url: url || "https://www.google.com/search?q=" + encodeURIComponent(name + " AI") }));
+
+
+const $ = (s) => document.querySelector(s);
+const reelsEl = $("#reels"), machine = $("#machine"), spinBtn = $("#spin"), leverEl = $("#lever");
+const nInput = $("#n"), nOut = $("#nOut"), win = $("#win");
+const BASE = [0, 22, 19, 16, 14, 13];
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const CYCLES = 5;
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = (s) => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+$("#lights").innerHTML = Array.from({ length: 9 }, (_, k) => `<i style="--k:${k}"></i>`).join("");
+$("#foot").textContent = `${DATA.length} companies, labs and projects across ${KEYS.length} fields, picked by hand as of November 2026. The field tags are judgment calls. Anything Claude scouts should be checked.`;
+
+let N = 3, reels = [], spinning = false, autoTimer = 0, rafId = 0, last = 0, H = 64, sampleFn = null;
+
+function size() {
+  const w = reelsEl.clientWidth || 560;
+  const perRow = Math.max(1, Math.min(N + 1, Math.floor(w / 84)));
+  const colW = w / perRow;
+  const fs = Math.max(11, Math.min(BASE[N], colW / 7.2));
+  H = Math.round(fs * 3.3);
+  reelsEl.style.setProperty("--fs", fs + "px");
+  reelsEl.style.setProperty("--h", H + "px");
+  reels.forEach(r => { r.offset = r.idx * H; paint(r); });
+}
+function paint(r) {
+  const cycle = r.order.length * H;
+  const t = `translateY(${-(r.offset + cycle - H)}px)`;
+  r.strip.style.transform = t; r.strip.style.setProperty("--t", t);
+}
+function build(start) {
+  const kept = reels.filter(r => r.held).map(r => r.field).slice(0, N);
+  reelsEl.innerHTML = `<div class="col ai"><div class="reel"><div class="payline"></div><div class="strip"><div class="cell">${icon("ai")}<span>AI</span></div></div></div><button class="hold" type="button" disabled tabindex="-1">Fixed</button></div>`;
+  reels = [];
+  for (let i = 0; i < N; i++) {
+    const col = document.createElement("div"); col.className = "col";
+    const order = shuffle(KEYS);
+    let cells = "";
+    for (let k = 0; k < CYCLES; k++) for (const key of order) cells += `<div class="cell">${icon(key)}<span>${FIELDS[key][0]}</span></div>`;
+    col.innerHTML = `<div class="reel"><div class="payline"></div><div class="strip">${cells}</div></div><button class="hold" type="button" aria-pressed="false">Hold</button>`;
+    reelsEl.append(col);
+    const field = kept[i] || (start && start[i]) || order[i];
+    const r = { col, strip: col.querySelector(".strip"), btn: col.querySelector(".hold"), order, field, idx: order.indexOf(field), offset: 0, held: i < kept.length, moving: false, anim: null, speed: 0 };
+    r.btn.addEventListener("click", () => { if (spinning) return; r.held = !r.held; syncHold(r); });
+    syncHold(r);
+    reels.push(r);
+  }
+  size();
+}
+function syncHold(r) {
+  r.btn.setAttribute("aria-pressed", r.held);
+  r.btn.textContent = r.held ? "Held" : "Hold";
+  r.btn.setAttribute("aria-label", `${r.held ? "Release" : "Hold"} ${FIELDS[r.field][0]}`);
+}
+
+/* ---------- spinning ---------- */
+function startSpin() {
+  if (spinning) return;
+  let free = reels.filter(r => !r.held);
+  if (!free.length) { reels.forEach(r => { r.held = false; syncHold(r); }); free = reels; }
+  spinning = true;
+  machine.classList.add("spinning"); machine.classList.remove("jackpot");
+  spinBtn.textContent = "Stop"; spinBtn.classList.add("stop");
+  win.textContent = "";
+  reels.forEach(r => r.btn.disabled = true);
+  free.forEach((r, i) => { r.moving = true; r.anim = null; r.speed = H * (reduce ? 5 : 11 + Math.random() * 4 + i); r.col.classList.add("moving"); r.col.classList.remove("landed"); });
+  $("#verdict").textContent = "Spinning…";
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => stopSpin(true), reduce ? 800 : 4000 + Math.random() * 2500);
+  last = performance.now();
+  cancelAnimationFrame(rafId); rafId = requestAnimationFrame(tick);
+}
+function pickTarget() {
+  const held = reels.filter(r => r.held).map(r => r.field);
+  const pool = DATA.filter(d => d.tags.length >= N && held.every(h => d.tags.includes(h)));
+  if (!pool.length) return null;
+  const d = pool[Math.random() * pool.length | 0];
+  return shuffle(d.tags.filter(t => !held.includes(t))).slice(0, N - held.length);
+}
+function stopSpin(auto) {
+  if (!spinning) return;
+  clearTimeout(autoTimer);
+  spinBtn.textContent = "…";
+  const free = reels.filter(r => r.moving && !r.anim);
+  const targets = auto ? pickTarget() : null;
+  const used = new Set(reels.filter(r => r.held).map(r => r.field));
+  free.forEach((r, i) => setTimeout(() => {
+    const cycle = r.order.length * H;
+    let dest;
+    if (targets && targets[i] && !used.has(targets[i])) {
+      dest = r.order.indexOf(targets[i]) * H;
+      while (dest < r.offset + 2 * H) dest += cycle;
+    } else {
+      let k = Math.ceil(r.offset / H);
+      while (used.has(r.order[k % r.order.length])) k++;
+      dest = k * H;
+    }
+    const idx = Math.round(dest / H) % r.order.length;
+    used.add(r.order[idx]);
+    r.anim = { from: r.offset, to: dest, t0: performance.now(), dur: reduce ? 100 : Math.max(450, Math.min(1300, (dest - r.offset) / r.speed * 2000)), idx };
+  }, i * (auto ? 340 : 240)));
+}
+const easeOutBack = (t) => { const s = 1.1; t -= 1; return t * t * ((s + 1) * t + s) + 1; };
+function tick(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  let any = false;
+  for (const r of reels) {
+    if (!r.moving) continue;
+    any = true;
+    const cycle = r.order.length * H;
+    if (r.anim) {
+      const t = Math.min(1, (now - r.anim.t0) / r.anim.dur);
+      r.offset = r.anim.from + (r.anim.to - r.anim.from) * easeOutBack(t);
+      if (t > .5) r.col.classList.remove("moving");
+      if (t >= 1) { r.idx = r.anim.idx; r.field = r.order[r.idx]; r.offset = r.idx * H; r.moving = false; r.anim = null; r.col.classList.add("landed"); syncHold(r); }
+    } else {
+      r.offset += r.speed * dt;
+      if (r.offset >= cycle) r.offset -= cycle;
+    }
+    paint(r);
+  }
+  if (any) rafId = requestAnimationFrame(tick);
+  else if (spinning) finish();
+}
+function finish() {
+  spinning = false;
+  machine.classList.remove("spinning");
+  spinBtn.textContent = "Spin"; spinBtn.classList.remove("stop");
+  reels.forEach(r => r.btn.disabled = false);
+  render(true);
+}
+function toggle() { spinning ? stopSpin(false) : startSpin(); }
+spinBtn.addEventListener("click", toggle);
+document.addEventListener("keydown", (e) => {
+  if (e.code !== "Space" || e.target.closest("input, button, a")) return;
+  e.preventDefault(); toggle();
+});
+
+/* lever: click or drag down */
+let dragY = null;
+function pullLever() {
+  leverEl.classList.add("pulled");
+  setTimeout(() => leverEl.classList.remove("pulled"), 260);
+  toggle();
+}
+leverEl.addEventListener("pointerdown", (e) => { dragY = e.clientY; leverEl.setPointerCapture(e.pointerId); });
+leverEl.addEventListener("pointerup", (e) => { if (dragY !== null) { dragY = null; pullLever(); } });
+leverEl.addEventListener("pointercancel", () => { dragY = null; });
+leverEl.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pullLever(); } });
+
+nInput.addEventListener("input", () => {
+  N = +nInput.value; nOut.textContent = N;
+  spinning = false; clearTimeout(autoTimer); cancelAnimationFrame(rafId);
+  machine.classList.remove("spinning");
+  build();
+  startSpin();
+});
+addEventListener("resize", size);
+
+/* ---------- results ---------- */
+const combo = () => reels.map(r => r.field);
+function item(d, set, scouted) {
+  const tags = d.tags.filter(t => FIELDS[t]).map(t => set.has(t) ? `<em>${FIELDS[t][0]}</em>` : FIELDS[t][0]).join(", ");
+  return `<li><a class="name" href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a> &nbsp;${esc(d.blurb)}<span class="meta">${esc(d.kind)}${tags ? " · " + tags : ""}${scouted ? " · suggested by Claude" : ""}</span></li>`;
+}
+function render(fromSpin) {
+  const set = new Set(combo());
+  $("#combo").textContent = "AI × " + combo().map(k => FIELDS[k][0]).join(" × ");
+  const exact = DATA.filter(d => [...set].every(f => d.tags.includes(f)));
+  const near = N === 1 ? [] : DATA.filter(d => !exact.includes(d))
+    .map(d => ({ d, o: d.tags.filter(t => set.has(t)).length }))
+    .filter(x => x.o >= Math.max(1, N - 1))
+    .sort((a, b) => b.o - a.o || b.d.tags.length - a.d.tags.length)
+    .slice(0, 8).map(x => x.d);
+  const v = $("#verdict");
+  v.innerHTML = exact.length
+    ? `<b>Jackpot.</b> ${exact.length === 1 ? "One builder is" : exact.length + " builders are"} already working here.`
+    : `No one on the list sits exactly here yet.${near.length ? " These are the closest." : ""}`;
+  if (sampleFn) v.innerHTML += ` <button class="scout" id="scoutBtn" type="button">Ask Claude for more</button>`;
+  let html = "";
+  if (exact.length) html += `<ul class="list">${exact.map(d => item(d, set)).join("")}</ul>`;
+  if (near.length) html += `<h2 class="sub">${exact.length ? "Nearby" : "Closest"} (${N - 1} of ${N} fields)</h2><ul class="list">${near.map(d => item(d, set)).join("")}</ul>`;
+  html += `<div id="scoutOut"></div>`;
+  $("#list").innerHTML = html;
+  const b = $("#scoutBtn"); if (b) b.addEventListener("click", scout);
+  if (fromSpin && exact.length) { win.textContent = "Jackpot"; machine.classList.remove("jackpot"); void machine.offsetWidth; machine.classList.add("jackpot"); }
+}
+
+/* ---------- Ask Claude ---------- */
+let ctl = null;
+async function scout() {
+  const btn = $("#scoutBtn"), out = $("#scoutOut");
+  if (!btn || !sampleFn) return;
+  const names = combo().map(k => FIELDS[k][0]);
+  const set = new Set(combo());
+  const known = DATA.filter(d => d.tags.some(t => set.has(t))).map(d => d.name).join(", ");
+  btn.disabled = true; btn.textContent = "Asking Claude…";
+  ctl?.abort(); ctl = new AbortController();
+  const prompt = `List up to 6 real companies, research labs or named research projects that use AI at the intersection of ALL of these fields: AI, ${names.join(", ")}.
+Only include ones you are confident actually exist. Skip these, which are already listed: ${known}.
+If none genuinely sit at this intersection, return []. Do not invent names.
+Reply with only a JSON array of objects: {"name": string, "kind": "Company" | "Research lab" | "Project", "blurb": string (max 22 words, plain), "fields": string[] (subset of: ${KEYS.join(", ")}), "url": string or null (official homepage only if you are sure)}.`;
+  try {
+    const list = await sampleFn.json(prompt, { signal: ctl.signal });
+    const items = (Array.isArray(list) ? list : []).filter(x => x && x.name).slice(0, 6).map(x => ({
+      name: String(x.name), kind: String(x.kind || "Company"), blurb: String(x.blurb || ""),
+      tags: (Array.isArray(x.fields) ? x.fields : []).filter(f => FIELDS[f]),
+      url: typeof x.url === "string" && /^https:\/\//.test(x.url) ? x.url : "https://www.google.com/search?q=" + encodeURIComponent(x.name),
+    }));
+    out.innerHTML = `<h2 class="sub">From Claude (check these)</h2>` + (items.length ? `<ul class="list">${items.map(d => item(d, set, true)).join("")}</ul>` : `<p class="verdict">Claude couldn't name anyone it was sure about. Open ground.</p>`);
+  } catch (e) {
+    if (e && e.code === "cancelled") return;
+    const msg = { not_granted: "This needs your permission to use Claude.", rate_limited: "Too many requests. Try again in a minute.", invalid_json: "The answer came back garbled. Try again." }[e && e.code] || "That didn't work. Try again.";
+    out.innerHTML = `<p class="verdict">${msg}</p>`;
+    if (e && (e.code === "not_granted" || e.code === "sampling_disabled")) sampleFn = null;
+  } finally {
+    const b = $("#scoutBtn"); if (b) { b.disabled = false; b.textContent = "Ask Claude again"; }
+  }
+}
+(async () => {
+  try { sampleFn = window.claude ? await window.claude.use("sample") : null; } catch { sampleFn = null; }
+  if (sampleFn && !spinning) render(false);
+})();
+
+build(["bio", "consumer", "mat"]);
+render(false);
+})();
+</script>
+
+</body>
+</html>
