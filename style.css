@@ -67,3 +67,23 @@ footer a:hover { color: var(--ink); }
 
 main img { max-width: 100%; height: auto; }
 main p > img, main li > img { display: block; border-radius: 10px; border: 1px solid var(--hair); }
+
+/* notes: lower-pressure posts, like a page from a notebook */
+.notes-title { font: 500 30px/1.2 "Caveat", var(--serif); margin-top: 48px; }
+.note { background: #fbf6ea; background-image: repeating-linear-gradient(to bottom, transparent 0 31px, rgba(31, 78, 140, 0.12) 31px 32px); border-radius: 14px; padding: 28px 28px 4px; line-height: 32px; box-shadow: 0 1px 0 rgba(60, 40, 20, 0.08), 0 10px 30px rgba(60, 40, 20, 0.10); transform: rotate(-0.3deg); }
+.note h1 { font: 500 42px/1 "Caveat", var(--serif); margin: 0 0 4px; }
+.note .date { font: 500 22px/32px "Caveat", var(--serif); color: var(--soft); margin: 0 0 32px; }
+.note p, .note ul { margin: 0 0 32px; }
+.note li { margin: 0; }
+@media (max-width: 520px) { .note { padding: 20px 18px 4px; transform: none; } }
+
+/* picture roll */
+.roll summary { list-style: none; cursor: pointer; }
+.roll summary::-webkit-details-marker { display: none; }
+.roll summary h1 { display: inline; }
+.roll summary::after { content: " ▾"; font-size: 22px; color: var(--soft); }
+.roll[open] summary::after { content: " ▴"; }
+.roll-strip { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 20px 0 12px; min-height: 120px; }
+.roll-strip > p { flex: none; margin: 0; scroll-snap-align: start; }
+.roll-strip img { height: 340px; width: auto; max-width: none; border-radius: 12px; border: 0; }
+@media (max-width: 520px) { .roll-strip img { height: 260px; } }

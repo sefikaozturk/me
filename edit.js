@@ -55,13 +55,14 @@ main.ed-drop{box-shadow:0 0 0 2px #1a3fbf}
 
   function setEditing(on) {
     editing = on;
-    if (on) { main.setAttribute("contenteditable", ""); main.focus(); btn.textContent = "Save"; btn.className = ""; say("Drop images · paste links · - for lists"); }
+    if (on) { main.querySelectorAll("details").forEach((d) => (d.open = true)); main.setAttribute("contenteditable", ""); main.focus(); btn.textContent = "Save"; btn.className = ""; say("Drop images · paste links · - for lists"); }
     else { main.removeAttribute("contenteditable"); btn.textContent = "Edit"; btn.className = "off"; }
   }
   async function save() {
     const clone = main.cloneNode(true);
     clone.removeAttribute("contenteditable");
     clone.classList.remove("ed-drop");
+    clone.querySelectorAll("details[open]").forEach((d) => d.removeAttribute("open"));
     if (!clone.getAttribute("class")) clone.removeAttribute("class");
     clone.querySelectorAll('a[href^="http"]').forEach((l) => { l.target = "_blank"; l.rel = "noopener"; });
     const res = await fetch("/__save?path=" + encodeURIComponent(location.pathname), { method: "PUT", body: clone.innerHTML });
