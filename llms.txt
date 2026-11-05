@@ -1,0 +1,13 @@
+# Sefika Ozturk
+
+> Sefika Ozturk works on AI safety: evaluations, reinforcement learning, and keeping autonomous agents accountable. Computer Science at Vanderbilt (Ingram Scholar). Leads the Vanderbilt AI Safety Initiative.
+
+## Pages
+- [Home](https://sefikaozturk.com/): who she is and what she's working on now
+- [Projects](https://sefikaozturk.com/projects): things she has built
+- [Writing](https://sefikaozturk.com/writing): policy memos and essays
+- [The AUTONOMY Act](https://sefikaozturk.com/writing/autonomy-act): policy memo on liability for autonomous AI agents, with Rovier Chen
+
+## Contact
+- Book a time: https://calendly.com/sefika-ozturk
+- Email: sefika.n.ozturk@vanderbilt.edu
