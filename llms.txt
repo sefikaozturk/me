@@ -6,6 +6,7 @@
 - [Home](https://sefikaozturk.com/): who she is and what she's working on now
 - [Projects](https://sefikaozturk.com/projects): things she has built
 - [Writing](https://sefikaozturk.com/writing): policy memos and essays
+- [Polarizing ideas, the Antichrist, AI safety](https://sefikaozturk.com/writing/polarizing-ideas): On Peter Thiel, hedging between beliefs, whether organizations can be evil, and why acting beats waiting in AI safety.
 - [The AUTONOMY Act](https://sefikaozturk.com/writing/autonomy-act): policy memo on liability for autonomous AI agents, with Rovier Chen
 
 ## Notes
