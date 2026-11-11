@@ -6,7 +6,7 @@
 - [Home](https://sefikaozturk.com/): who she is and what she's working on now
 - [Projects](https://sefikaozturk.com/projects): things she has built
 - [Writing](https://sefikaozturk.com/writing): policy memos and essays
-- [Is simulated water wet? On Pantheon and rogue AI](https://sefikaozturk.com/writing/pantheon-rogue-ai): Simulated minds, Pantheon's uploaded intelligences, rogue AI agents, and whether band-aid security tech is enough.
+- [Is simulated water, water? Pantheon, rogue AI, and our direction as humanity](https://sefikaozturk.com/writing/pantheon-rogue-ai): Simulated minds, Pantheon's uploaded intelligences, rogue AI agents, and whether band-aid security tech is enough.
 - [Polarizing ideas, the Antichrist, AI safety](https://sefikaozturk.com/writing/polarizing-ideas): On Peter Thiel, hedging between beliefs, whether organizations can be evil, and why acting beats waiting in AI safety.
 - [The AUTONOMY Act](https://sefikaozturk.com/writing/autonomy-act): policy memo on liability for autonomous AI agents, with Rovier Chen
 
