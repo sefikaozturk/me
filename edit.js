@@ -18,8 +18,8 @@ const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": 
 const IMAGE_EXT = { "image/jpeg": ".jpg", "image/png": ".png", "image/gif": ".gif", "image/webp": ".webp" };
 
 // Pages that build themselves with JavaScript (like intersections.html) can't be edited as text; saving would freeze their output.
-// The analytics and comments snippets (between <!-- analytics --> / <!-- comments --> markers) don't count.
-const editable = (html) => /<main[\s>]/.test(html) && !/<script[\s>]/i.test(html.replace(/<!-- (analytics|comments) -->[\s\S]*?<!-- \/\1 -->/g, ""));
+// The Vercel Analytics snippet (between <!-- analytics --> markers) doesn't count.
+const editable = (html) => /<main[\s>]/.test(html) && !/<script[\s>]/i.test(html.replace(/<!-- analytics -->[\s\S]*?<!-- \/analytics -->/g, ""));
 
 function resolve(urlPath) {
   let p = decodeURIComponent(urlPath.split("?")[0]);

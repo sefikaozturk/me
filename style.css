@@ -107,24 +107,3 @@ article.note li { margin: 0 0 10px; }
 
 /* acknowledgments at the end of an essay */
 article .thanks { font-style: italic; color: var(--soft); margin-top: 40px; }
-
-/* comments: quiet, under writing and notes */
-.comments { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--hair); color: var(--soft); }
-.comments-title { font: 400 14px/1.4 var(--sans); color: var(--soft); margin: 0 0 18px; }
-.comments-list { list-style: none; padding: 0; margin: 0 0 20px; }
-.comments-list li { margin: 0 0 18px; }
-.comment-meta { margin: 0 0 2px; font: 13px/1.4 var(--sans); }
-.comment-name { font-weight: 600; }
-.comment-text { margin: 0; font: 15px/1.6 var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; }
-.comment-form { display: grid; gap: 6px; }
-.comment-form input, .comment-form textarea { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 6px 0; font: 15px/1.5 var(--serif); color: var(--ink); resize: vertical; }
-.comment-form input[name="name"] { max-width: 260px; }
-.comment-form input:focus, .comment-form textarea:focus { outline: none; border-bottom-color: var(--soft); }
-.comment-form ::placeholder { color: var(--soft); opacity: .75; }
-.comment-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-.comment-actions { display: flex; align-items: baseline; gap: 12px; margin-top: 4px; }
-.comment-form button { background: none; border: 0; padding: 0; font: 14px var(--sans); color: var(--soft); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.comment-form button:hover { color: var(--ink); }
-.comment-form button:disabled { opacity: .5; cursor: default; }
-.comment-status { font: 13px var(--sans); }
-@media (max-width: 520px) { .comment-form input, .comment-form textarea { font-size: 16px; } }
