@@ -79,7 +79,6 @@ article.note h1 { font: 700 30px/1.2 Georgia, var(--serif); letter-spacing: -0.0
 article.note .rule { border: 0; height: 3px; width: 64px; background: var(--ink); margin: 0 0 32px; }
 article.note p, article.note ul { margin: 0 0 20px; }
 article.note li { margin: 0 0 10px; }
-article.note .posted { font: italic 15px/1.5 Georgia, var(--serif); color: var(--soft); border-top: 1px dotted var(--soft); padding-top: 12px; margin-top: 40px; }
 @media (max-width: 520px) { article.note { padding-top: 4px; } article.note h1 { font-size: 26px; } article.note .back { margin-bottom: 32px; } }
 
 /* picture roll */
