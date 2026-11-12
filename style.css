@@ -146,3 +146,6 @@ article.note .posted { font: italic 15px/1.5 Georgia, var(--serif); color: var(-
   .stat span { display: inline; }
   .summary { padding: 16px 18px 2px; }
 }
+
+/* acknowledgments at the end of an essay */
+article .thanks { font-style: italic; color: var(--soft); margin-top: 40px; }
