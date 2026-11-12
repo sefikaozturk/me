@@ -69,7 +69,7 @@ main img { max-width: 100%; height: auto; }
 main p > img, main li > img { display: block; border-radius: 10px; border: 1px solid var(--hair); }
 
 /* notes: lower-pressure posts, styled like an old blog */
-.notes-title { font: 700 22px/1.3 Georgia, var(--serif); margin-top: 48px; }
+.notes-title { font: 400 26px/1.2 var(--serif); letter-spacing: -0.01em; margin-top: 48px; }
 article.note { font: 17px/1.75 Georgia, var(--serif); color: var(--ink); padding-top: 16px; }
 article.note .back { display: inline-block; font: italic 20px/1 Georgia, var(--serif); color: var(--soft); text-decoration: none; margin-bottom: 44px; }
 article.note .back:hover { color: var(--link); }
