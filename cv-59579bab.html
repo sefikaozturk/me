@@ -11,7 +11,10 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
 <link rel="stylesheet" href="style.css">
 <!-- analytics -->
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+// Visit any page with ?notrack to stop counting your own visits in this browser (?track undoes it).
+try { var q = location.search; if (/[?&]notrack\b/.test(q)) { localStorage.setItem("umami.disabled", "1"); localStorage.setItem("va-disable", "1"); } else if (/[?&]track\b/.test(q)) { localStorage.removeItem("umami.disabled"); localStorage.removeItem("va-disable"); } } catch (e) {}
+window.va("beforeSend", function (e) { try { return localStorage.getItem("va-disable") ? null : e; } catch (_) { return e; } });</script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="7a1683a8-131f-499f-bada-f7a5398f0317" data-domains="sefikaozturk.com,www.sefikaozturk.com"></script>
 <script defer src="/events.js"></script>
