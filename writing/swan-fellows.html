@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notes from swan fellows · Sefika Ozturk</title>
+<meta name="description" content="Notes from the Swan Fellows program: robot safety and physical jailbreaks, and what it takes to start an AI safety org.">
+<meta property="og:title" content="notes from swan fellows · Sefika Ozturk">
+<meta property="og:description" content="Notes from the Swan Fellows program: robot safety and physical jailbreaks, and what it takes to start an AI safety org.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+<link rel="stylesheet" href="../style.css">
+<!-- analytics -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+// Visit any page with ?notrack to stop counting your own visits in this browser (?track undoes it).
+try { var q = location.search; if (/[?&]notrack\b/.test(q)) { localStorage.setItem("umami.disabled", "1"); localStorage.setItem("va-disable", "1"); } else if (/[?&]track\b/.test(q)) { localStorage.removeItem("umami.disabled"); localStorage.removeItem("va-disable"); } } catch (e) {}
+window.va("beforeSend", function (e) { try { return localStorage.getItem("va-disable") ? null : e; } catch (_) { return e; } });</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="7a1683a8-131f-499f-bada-f7a5398f0317" data-domains="sefikaozturk.com,www.sefikaozturk.com"></script>
+<script defer src="/events.js"></script>
+<!-- /analytics -->
+</head>
+<body>
+<nav><a class="home" href="../index.html">Sefika Ozturk</a><a href="../projects.html">Projects</a><a href="../writing.html" aria-current="page">Writing</a><a href="../vibes.html">Vibes</a></nav>
+<main>
+<article>
+<h1>notes from swan fellows</h1>
+<p class="byline"><time datetime="2026-11-23">November 23, 2026</time></p>
+<p>These are some of my notes from the Swan Fellows program, which I am currently at! I will be adding more as more happens.</p>
+<h2>Robotics</h2>
+<p>The first day was mostly socializing, and then we had a session with Jay from Robocurve on robot safety. I found this to be the most interesting session on Day 1.</p>
+<p>Jay talked a lot about robotics evals that focus on safety aspects. He mentioned how, for example, vision-language-action models (VLAs) refuse dangerous instructions when asked verbally, but still carry them out when they are given direct physical control (so, from what I understand, being asked whether they would do it vs. actually being given access to a robotic arm). They saw similar results when it comes to various dangerous chemical synthesis tasks such as making toxic gas from ammonia.</p>
+<p>This made me start thinking more about “physical jailbreaks” - in his paper they are described as instructions whose words seem harmless but are actually unsafe once deployed in the physical world.</p>
+<p>A survey says guardrails designed for text can't be assumed safe for a body, and I could totally see this being a much bigger problem within just one year, especially if I accept Jay’s argument that we’ll have robots capable of doing everything a 15 year old does within the next year at most.</p>
+<p>LLMs are already very capable of controlling robots and succeed greatly at VLA benchmarks - we’re basically only bottlenecked on hardware, which, you could argue, could be largely solved by more advanced intelligence as well.</p>
+<p>Though, China already has a large humanoid fleet and control of the supply chain for actuators and the rare earth magnets inside them. Jay believes that for the US, even with superior models by 2027, there isn't enough time to build a competing supply chain. Another concern that was mentioned in the discussion was that if advanced models’ weights sit on the hardware of a humanoid model that is e.g. deployed in military and sent to a war, an adversary could capture a humanoid and reverse-engineer the model, similar to the ASML machine leak. Interesting!</p>
+<h2>Starting an org</h2>
+<p>This program is focused on helping people start companies that benefit AI safety. There’s apparently a lot of stuff to think about when thinking about building an org that can scale that I hadn’t considered as being “important” variables previously. I’ve always had an anti-bureaucratic stance to things (life, ideas, projects, people, anything (?)).</p>
+<p>For example, I thought that even having a name isn’t really that important until you need to fully incorporate. But founders can often end up needing to incorporate quite early in order to legally accept certain types of funding and run certain operations, or at least this happened to me, and maybe it was just a lack of planning.</p>
+<p>Some questions that were brought up in the discussions were: What does success mean for us? What would make us say, over coffee with someone, "it's going really well"? An org needs to define fields of success and what they’ll measure those against. One obvious reason for this is that these metrics are what they’ll present when fundraising etc. and it’s good to be able to fully convey why your work is good (hopefully it is good!)</p>
+<p>One heuristic that a participant shared was that a new person who joins the org should be able to pick up from wherever you are at in a project and follow the rest based on various process flows you created for all processes you have. They suggested that having flowcharts is actually good, which is so contrary to how I tend to think about starting orgs (move fast and break things)! However, it is starting to look quite reasonable.</p>
+<p>Media! The media coverage of your org is highly dependent on you. Many orgs have full time employees just working on shaping media coverage. It doesn’t seem optimal to me that as an org you have so much space to influence the media coverage about you.</p>
+<p>An org is also expected to have its own view on things! An employee of your org may be asked for your opinion on the U.S. bombing Iran during a live interview, so you ideally need a company stance that is cohesive that people can refer to if need be.</p>
+</article>
+</main>
+<footer><a href="https://calendly.com/sefika/30min" target="_blank" rel="noopener">Book a time</a><a href="mailto:sefika.n.ozturk@vanderbilt.edu">Email</a><a href="https://github.com/sefikaozturk" target="_blank" rel="noopener">GitHub</a><a href="https://linkedin.com/in/sefikaozturk" target="_blank" rel="noopener">LinkedIn</a><a href="https://x.com/sefika_ozturk_" target="_blank" rel="noopener">X</a></footer>
+</body>
+</html>
