@@ -6,12 +6,12 @@
 - [Home](https://sefikaozturk.com/): who she is and what she's working on now
 - [Projects](https://sefikaozturk.com/projects): things she has built
 - [Writing](https://sefikaozturk.com/writing): policy memos and essays
-- [notes from swan fellows](https://sefikaozturk.com/writing/swan-fellows): Notes from the Swan Fellows program: robot safety and physical jailbreaks, and what it takes to start an AI safety org.
 - [Is simulated water, water? Pantheon, rogue AI, and reworking our societal systems](https://sefikaozturk.com/writing/pantheon-rogue-ai): Simulated minds, Pantheon's uploaded intelligences, rogue AI agents, and whether band-aid security tech is enough.
 - [Polarizing ideas, the Antichrist, AI safety](https://sefikaozturk.com/writing/polarizing-ideas): On Peter Thiel, hedging between beliefs, whether organizations can be evil, and why acting beats waiting in AI safety.
 - [The AUTONOMY Act](https://sefikaozturk.com/writing/autonomy-act): policy memo on liability for autonomous AI agents, with Rovier Chen
 
 ## Notes
+- [notes from swan fellows](https://sefikaozturk.com/notes/swan-fellows): notes from the Swan Fellows program on robot safety and starting an AI safety org (Nov 2026)
 - [nashville jazz workshop](https://sefikaozturk.com/notes/nashville-jazz-workshop): volunteering at Nashville Jazz Workshop (Oct 2026)
 - [a step ahead](https://sefikaozturk.com/notes/a-step-ahead): volunteering at a recovery festival in Erin, Tennessee (Oct 2024)
 - [Picture roll](https://sefikaozturk.com/pictures)
