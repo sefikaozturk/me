@@ -1,6 +1,21 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/writing/swan-fellows", "destination": "/notes/swan-fellows", "permanent": true }
+    {
+      "source": "/writing/swan-fellows",
+      "destination": "/notes/swan-fellows",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(cv-.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
   ]
 }
